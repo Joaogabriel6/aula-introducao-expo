@@ -1,7 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, View } from 'react-native';
 
-import Exemplo03 from './src/exemplos/ex03';
+import Exemplo03 from './src/exemplos/ex04';
 
 export default function App() {
   return (
