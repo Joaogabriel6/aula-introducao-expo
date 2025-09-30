@@ -1,12 +1,12 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, View } from 'react-native';
 
-import Exemplo03 from './src/exemplos/ex04';
+import Atividade05 from './src/atividades/atv05';
 
 export default function App() {
   return (
     <View style={styles.container}>
-      <Exemplo03 />
+      <Atividade05 />
       <StatusBar style="auto" />
     </View>
   );
