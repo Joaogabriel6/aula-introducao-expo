@@ -1,81 +1,99 @@
-import { Text, View, TextInput, TouchableOpacity } from 'react-native';
-
 import { useState } from 'react';
+import { View, Text, Pressable, TextInput } from 'react-native';
+
+import BotaoOperacao from './botao';
+import Input from './input';
 
 import styles from './styles';
 
 export default function Atividade05() {
 
-    const [n1, setN1] = useState(0);
-    const [n2, setN2] = useState(0);
-    const [total, setTotal] = useState(0);
+    const [n1, setN1] = useState(''); // Usar string vazia é melhor para inputs
+    const [n2, setN2] = useState('');
+    const [total, setTotal] = useState(null); // Usar null para indicar "nenhum resultado ainda"
+    const [operacaoTxt, setOperacaoTxt] = useState('');
 
-    function Soma() {
-        const conta = parseInt(n1) + parseInt(n2); 
-        setTotal(conta.toString()); 
-    }
-    function Mult() {
-        const conta = parseInt(n1) * parseInt(n2); 
-        setTotal(conta.toString()); 
-    }
-    function Sub() {
-        const conta = parseInt(n1) - parseInt(n2); 
-        setTotal(conta.toString()); 
-    }
-    function Divi() {
-        const conta = parseInt(n1) / parseInt(n2); 
-        setTotal(conta.toString()); 
-    }
+    // Função dedicada para limpar os estados
+    const handleClear = () => {
+        setN1('');
+        setN2('');
+        setTotal(null);
+        setOperacaoTxt('');
+    };
+
+    // Lógica de cálculo refatorada
+    const handleCalculate = (op) => {
+        setOperacaoTxt(op);
+
+        const num1 = parseFloat(n1);
+        const num2 = parseFloat(n2);
+
+        // Validação para evitar NaN (Not a Number)
+        if (isNaN(num1) || isNaN(num2)) {
+            alert('Por favor, insira números válidos.');
+            return;
+        }
+
+        let resultado = 0;
+        switch (op) {
+            case '+':
+                resultado = num1 + num2;
+                break;
+            case '-':
+                resultado = num1 - num2;
+                break;
+            case 'x':
+                resultado = num1 * num2;
+                break;
+            case '/':
+                // Tratamento de divisão por zero
+                if (num2 === 0) {
+                    alert('Não é possível dividir por zero!');
+                    return;
+                }
+                resultado = num1 / num2;
+                break;
+            default:
+                break;
+        }
+        setTotal(resultado);
+    };
+
     return (
         <View style={styles.container}>
-            <Text style={styles.paragraph}>
-                Atividade 05
-            </Text>
-    
+            <Text style={styles.titulo}> Atividade 5 </Text>
 
+            <Text style={styles.txtSaida}> Calculadora básica </Text>
 
+            <Text style={styles.textLabel}> 1º número </Text>
+            <Input valor={n1} alteraValor={setN1} />
 
-    <Text style={styles.txtSaida}>Calculadora básica</Text>
+            <Text style={styles.txtSaida}>{operacaoTxt}</Text>
 
+            <Text style={styles.textLabel}> 2º número </Text>
+            <Input valor={n2} alteraValor={setN2} />
 
-    <Text style={styles.textLabel}> 1° número </Text>
-    <TextInput style={styles.txtEntrada}
-        onChangeText={(entrada) => setN1(entrada)}
-        value={n1}
-    />
+            <Text style={[styles.txtSaida, { margin: 0 }]}> = </Text>
 
-    <Text style={styles.txtSaida}> + </Text>
+            <Text style={styles.textLabel}> Total </Text>
+            <Input
+                // Garante que o valor seja string, mesmo se for null
+                valor={total !== null ? total.toFixed(2) : '0.00'}
+                alteraValor={() => { }} // Função vazia, pois é somente leitura
+                readOnly={true}
+            />
 
-    <Text style={styles.textLabel} > 2° número </Text>
-    <TextInput style={styles.txtEntrada}
-        onChangeText={(entrada) => setN2(entrada)}
-        value={n2}
-    />
+            <View style={styles.containerBotoes}>
+                <BotaoOperacao onPress={() => handleCalculate('+')}>+</BotaoOperacao>
+                <BotaoOperacao onPress={() => handleCalculate('-')}>-</BotaoOperacao>
+                <BotaoOperacao onPress={() => handleCalculate('x')}>x</BotaoOperacao>
+                <BotaoOperacao onPress={() => handleCalculate('/')}>/</BotaoOperacao>
+            </View>
 
+            <BotaoOperacao onPress={handleClear} grande={true}>
+                Zerar
+            </BotaoOperacao>
 
-    <Text style={[styles.txtSaida, { margin: 0 }]}> = </Text>
-    <Text style={styles.textLabel}> Total </Text>
-    <TextInput style={styles.txtEntrada}
-        editable={false}
-        value={total}
-    />
-
-    <TouchableOpacity style={styles.button} onPress={() => Soma()    }>
-        <Text style={styles.textButton}> + </Text>
-    </TouchableOpacity>
-
-    <TouchableOpacity style={styles.button} onPress={() => Sub()    }>
-        <Text style={styles.textButton}> / </Text>
-    </TouchableOpacity>
-
-    <TouchableOpacity style={styles.button} onPress={() => Mult()    }>
-        <Text style={styles.textButton}> * </Text>
-    </TouchableOpacity>
-
-    <TouchableOpacity style={styles.button} onPress={() => Divi()    }>
-        <Text style={styles.textButton}> - </Text>
-    </TouchableOpacity>
-</View>
-
+        </View>
     );
 }
